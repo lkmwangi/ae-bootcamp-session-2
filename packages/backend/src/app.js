@@ -70,12 +70,6 @@ const toTask = (task) => ({
   updatedAt: task.updated_at,
 });
 
-const toItem = (task) => ({
-  id: task.id,
-  name: task.title,
-  created_at: task.created_at,
-});
-
 const isValidDate = (value) => {
   if (value === null || value === undefined || value === '') {
     return true;

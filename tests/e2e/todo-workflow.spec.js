@@ -1,12 +1,24 @@
 const { test, expect } = require('@playwright/test');
 const { TodoPage } = require('./pages/todo-page');
 
+const E2E_PREFIXES = ['E2E task', 'Editable task'];
+
 test.describe('Todo workflow', () => {
-  test('creates, completes, and deletes a task', async ({ page }) => {
-    const todoPage = new TodoPage(page);
+  let todoPage;
 
+  test.beforeEach(async ({ page }) => {
+    todoPage = new TodoPage(page);
     await todoPage.goto();
+    await todoPage.cleanupTasksByPrefix(E2E_PREFIXES);
+  });
 
+  test.afterEach(async () => {
+    if (todoPage) {
+      await todoPage.cleanupTasksByPrefix(E2E_PREFIXES);
+    }
+  });
+
+  test('creates, completes, and deletes a task', async () => {
     const title = `E2E task ${Date.now()}`;
     await todoPage.createTask({
       title,
@@ -20,11 +32,7 @@ test.describe('Todo workflow', () => {
     await todoPage.deleteTask(title);
   });
 
-  test('edits a task title and due date', async ({ page }) => {
-    const todoPage = new TodoPage(page);
-
-    await todoPage.goto();
-
+  test('edits a task title and due date', async () => {
     const title = `Editable task ${Date.now()}`;
     await todoPage.createTask({
       title,

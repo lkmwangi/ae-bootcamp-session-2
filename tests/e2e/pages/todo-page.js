@@ -15,6 +15,27 @@ class TodoPage {
     return this.page.getByTestId('task-card').filter({ hasText: title });
   }
 
+  async getTasks() {
+    const response = await this.page.request.get('/api/tasks');
+    if (!response.ok()) {
+      throw new Error(`Failed to fetch tasks for cleanup: ${response.status()}`);
+    }
+
+    return response.json();
+  }
+
+  async cleanupTasksByPrefix(prefixes) {
+    const tasks = await this.getTasks();
+    const matchingTasks = tasks.filter((task) => prefixes.some((prefix) => task.title.startsWith(prefix)));
+
+    for (const task of matchingTasks) {
+      const response = await this.page.request.delete(`/api/tasks/${task.id}`);
+      if (!response.ok()) {
+        throw new Error(`Failed to delete task ${task.id} during cleanup: ${response.status()}`);
+      }
+    }
+  }
+
   async createTask({ title, description = '', dueDate = '' }) {
     await this.createTaskForm.getByLabel('Task title').fill(title);
     await this.createTaskForm.getByLabel('Description').fill(description);
