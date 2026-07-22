@@ -54,7 +54,7 @@ jobs:
           fi
 
       - name: Check copilot-instructions.md references requirements
-        id: check-copilot-instructions-md
+        id: check_copilot_instructions_md
         run: |
           grep -q 'functional-requirements.md' .github/copilot-instructions.md
 
@@ -66,13 +66,13 @@ jobs:
           template-file: exercise-toolkit/markdown-templates/step-feedback/step-results-table.md
           template-vars: |
             step_number: 2-1
-            passed: ${{ steps.check_requirements.outcome == 'success' && steps.check-copilot-instructions-md.outcome == 'success' }}
+            passed: ${{ steps.check_requirements.outcome == 'success' && steps.check_copilot_instructions_md.outcome == 'success' }}
             results_table:
               - description: "The file 'functional-requirements.md' should exist under `docs/` folder"
                 passed: ${{ steps.check_requirements.outcome == 'success' }}
                 error_message: "The file 'docs/functional-requirements.md' was not found or does not contain all the requirements."
               - description: "The file '.github/copilot-instructions.md' should reference 'functional-requirements.md'"
-                passed: ${{ steps.check-copilot-instructions-md.outcome == 'success' }}
+                passed: ${{ steps.check_copilot_instructions_md.outcome == 'success' }}
                 error_message: "The file '.github/copilot-instructions.md' does not reference 'functional-requirements.md'."
 
       - name: Create comment - step results
